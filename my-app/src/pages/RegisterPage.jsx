@@ -18,7 +18,7 @@ const FONTS = {
 function Navbar({ currentPage, onNavigate }) {
   return (
     <nav style={{ backgroundColor: COLORS.maroon.dark, color: COLORS.text.gold, padding: '16px 24px' }}>
-      <strong>WildConnect</strong>
+      <strong>WayKonekk</strong>
       <span style={{ marginLeft: '12px' }}>{currentPage}</span>
       <button onClick={() => onNavigate('login')} style={{ marginLeft: '16px', background: 'none', border: 'none', color: COLORS.text.gold, cursor: 'pointer' }}>
         Login
