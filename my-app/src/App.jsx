@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
@@ -11,6 +12,13 @@ function App() {
         <LoginPage
           onNavigate={setCurrentPage}
           onLogin={setUser}
+        />
+      )}
+
+      {currentPage === 'register' && (
+        <RegisterPage
+          onNavigate={setCurrentPage}
+          onRegister={setUser}
         />
       )}
 
