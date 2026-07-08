@@ -1,0 +1,479 @@
+import { useState } from 'react';
+
+const COLORS = {
+  bgPage: '#f7f2e8',
+  bgInput: '#fdfaf4',
+  maroon: { dark: '#4d0d12', medium: '#6b1520', card: '#6f1d1b' },
+  gold: { primary: '#d4af37', light: '#f2d98c', muted: '#c9b36b', border: '#b88a2f' },
+  text: { gold: '#f3d98a', mutedGold: '#e6cf8f' },
+  textHeading: '#4e2a2b',
+  textBody: '#5f4a3c',
+};
+
+const FONTS = {
+  primary: 'Arial, sans-serif',
+  mono: 'Courier New, monospace',
+};
+
+function Navbar({ currentPage, onNavigate }) {
+  return (
+    <nav style={{ backgroundColor: COLORS.maroon.dark, color: COLORS.text.gold, padding: '16px 24px' }}>
+      <strong>WildConnect</strong>
+      <span style={{ marginLeft: '12px' }}>{currentPage}</span>
+      <button onClick={() => onNavigate('login')} style={{ marginLeft: '16px', background: 'none', border: 'none', color: COLORS.text.gold, cursor: 'pointer' }}>
+        Login
+      </button>
+    </nav>
+  );
+}
+
+function Footer({ onNavigate }) {
+  return (
+    <footer style={{ backgroundColor: COLORS.maroon.dark, color: COLORS.text.gold, padding: '16px 24px', textAlign: 'center' }}>
+      <button onClick={() => onNavigate('login')} style={{ background: 'none', border: 'none', color: COLORS.text.gold, cursor: 'pointer' }}>
+        Already have an account?
+      </button>
+    </footer>
+  );
+}
+
+function Card({ children, style }) {
+  return <div style={{ backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', ...style }}>{children}</div>;
+}
+
+export default function RegisterPage({ onNavigate, onRegister }) {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    schoolId: '',
+    email: '',
+    course: '',
+    year: '',
+    contactNumber: '',
+    role: 'Student',
+    password: '',
+    confirmPassword: '',
+    agreeTerms: false,
+  });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [hoveredButton, setHoveredButton] = useState(null);
+  const [focusedField, setFocusedField] = useState(null);
+  const [formError, setFormError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+    if (!formData.schoolId.trim()) newErrors.schoolId = 'School ID is required';
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+    if (!formData.course.trim()) newErrors.course = 'Course is required';
+    if (!formData.year.trim()) newErrors.year = 'Year level is required';
+    if (!formData.contactNumber.trim()) newErrors.contactNumber = 'Contact number is required';
+    
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+    if (!formData.agreeTerms) {
+      newErrors.agreeTerms = 'You must agree to the Terms of Service';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setIsLoading(true);
+    setFormError('');
+    try {
+      const data = {
+        user: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          schoolId: formData.schoolId,
+          email: formData.email,
+          course: formData.course,
+          year: formData.year,
+          contactNumber: formData.contactNumber,
+          role: formData.role,
+        },
+      };
+
+      const userData = data.user || data;
+      onRegister({
+        ...formData,
+        ...userData,
+      });
+      onNavigate('dashboard');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Registration failed. Please try again.';
+      setFormError(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const inputStyle = (fieldName) => ({
+    width: '100%',
+    padding: '12px 16px',
+    backgroundColor: COLORS.bgInput,
+    border: `2px solid ${errors[fieldName] ? '#ff4444' : focusedField === fieldName ? COLORS.gold.primary : COLORS.gold.border}`,
+    borderRadius: '8px',
+    color: COLORS.maroon.card,
+    fontFamily: fieldName === 'schoolId' ? FONTS.mono : FONTS.primary,
+    fontSize: '14px',
+    outline: 'none',
+    transition: 'all 0.3s ease',
+    boxShadow: focusedField === fieldName ? `0 0 8px ${COLORS.gold.primary}` : 'none',
+    boxSizing: 'border-box',
+  });
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Navbar currentPage="register" onNavigate={onNavigate} />
+
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '60px 40px',
+          backgroundColor: COLORS.bgPage,
+        }}
+      >
+        <Card style={{ width: '100%', maxWidth: '1000px', padding: '0' }}>
+          {/* Header Bar */}
+          <div
+            style={{
+              backgroundColor: COLORS.maroon.medium,
+              padding: '24px 32px',
+              borderBottom: `2px solid ${COLORS.gold.border}`,
+              borderRadius: '12px 12px 0 0',
+            }}
+          >
+            <h2 style={{ fontSize: '28px', fontWeight: 'bold', color: COLORS.text.gold, fontFamily: FONTS.primary, margin: 0 }}>
+              Create Your Account
+            </h2>
+            <p style={{ fontSize: '14px', color: COLORS.text.mutedGold, fontFamily: FONTS.primary, margin: '8px 0 0 0' }}>
+              Join WildConnect and manage your campus network access
+            </p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} style={{ padding: '32px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {/* First Name & Last Name */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', color: COLORS.textHeading, fontFamily: FONTS.primary, fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('firstName')}
+                    onBlur={() => setFocusedField(null)}
+                    style={inputStyle('firstName')}
+                  />
+                  {errors.firstName && (
+                    <p style={{ color: '#ff4444', fontFamily: FONTS.primary, fontSize: '12px', marginTop: '6px', marginBottom: 0 }}>
+                      {errors.firstName}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label style={{ display: 'block', color: COLORS.textHeading, fontFamily: FONTS.primary, fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('lastName')}
+                    onBlur={() => setFocusedField(null)}
+                    style={inputStyle('lastName')}
+                  />
+                  {errors.lastName && (
+                    <p style={{ color: '#ff4444', fontFamily: FONTS.primary, fontSize: '12px', marginTop: '6px', marginBottom: 0 }}>
+                      {errors.lastName}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* School ID */}
+              <div>
+                <label style={{ display: 'block', color: COLORS.textHeading, fontFamily: FONTS.primary, fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
+                  School ID
+                </label>
+                <input
+                  type="text"
+                  name="schoolId"
+                  value={formData.schoolId}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('schoolId')}
+                  onBlur={() => setFocusedField(null)}
+                  style={inputStyle('schoolId')}
+                />
+                {errors.schoolId && (
+                  <p style={{ color: '#ff4444', fontFamily: FONTS.primary, fontSize: '12px', marginTop: '6px', marginBottom: 0 }}>
+                    {errors.schoolId}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label style={{ display: 'block', color: COLORS.textHeading, fontFamily: FONTS.primary, fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField(null)}
+                  style={inputStyle('email')}
+                />
+                {errors.email && (
+                  <p style={{ color: '#ff4444', fontFamily: FONTS.primary, fontSize: '12px', marginTop: '6px', marginBottom: 0 }}>
+                    {errors.email}
+                  </p>
+                )}
+              </div>
+
+              {/* Course & Year Level */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', color: COLORS.textHeading, fontFamily: FONTS.primary, fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
+                    Course
+                  </label>
+                  <input
+                    type="text"
+                    name="course"
+                    placeholder="e.g. BSCS"
+                    value={formData.course}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('course')}
+                    onBlur={() => setFocusedField(null)}
+                    style={inputStyle('course')}
+                  />
+                  {errors.course && (
+                    <p style={{ color: '#ff4444', fontFamily: FONTS.primary, fontSize: '12px', marginTop: '6px', marginBottom: 0 }}>
+                      {errors.course}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label style={{ display: 'block', color: COLORS.textHeading, fontFamily: FONTS.primary, fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
+                    Year Level
+                  </label>
+                  <select
+                    name="year"
+                    value={formData.year}
+                    onChange={handleChange}
+                    style={inputStyle('year')}
+                  >
+                    <option value="">Select Year</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                    <option value="5th Year">5th Year</option>
+                  </select>
+                  {errors.year && (
+                    <p style={{ color: '#ff4444', fontFamily: FONTS.primary, fontSize: '12px', marginTop: '6px', marginBottom: 0 }}>
+                      {errors.year}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Contact Number */}
+              <div>
+                <label style={{ display: 'block', color: COLORS.textHeading, fontFamily: FONTS.primary, fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
+                  Contact Number
+                </label>
+                <input
+                  type="text"
+                  name="contactNumber"
+                  placeholder="e.g. 09123456789"
+                  value={formData.contactNumber}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('contactNumber')}
+                  onBlur={() => setFocusedField(null)}
+                  style={inputStyle('contactNumber')}
+                />
+                {errors.contactNumber && (
+                  <p style={{ color: '#ff4444', fontFamily: FONTS.primary, fontSize: '12px', marginTop: '6px', marginBottom: 0 }}>
+                    {errors.contactNumber}
+                  </p>
+                )}
+              </div>
+
+              {/* Role */}
+              <div>
+                <label style={{ display: 'block', color: COLORS.textHeading, fontFamily: FONTS.primary, fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
+                  Role
+                </label>
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  style={inputStyle('role')}
+                >
+                  <option value="Student">Student</option>
+                  <option value="Faculty">Faculty</option>
+                  <option value="Staff">Staff</option>
+                </select>
+              </div>
+
+              {/* Password & Confirm Password */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', color: COLORS.textHeading, fontFamily: FONTS.primary, fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('password')}
+                    onBlur={() => setFocusedField(null)}
+                    style={inputStyle('password')}
+                  />
+                  {errors.password && (
+                    <p style={{ color: '#ff4444', fontFamily: FONTS.primary, fontSize: '12px', marginTop: '6px', marginBottom: 0 }}>
+                      {errors.password}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label style={{ display: 'block', color: COLORS.textHeading, fontFamily: FONTS.primary, fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('confirmPassword')}
+                    onBlur={() => setFocusedField(null)}
+                    style={inputStyle('confirmPassword')}
+                  />
+                  {errors.confirmPassword && (
+                    <p style={{ color: '#ff4444', fontFamily: FONTS.primary, fontSize: '12px', marginTop: '6px', marginBottom: 0 }}>
+                      {errors.confirmPassword}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Terms Checkbox */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <input
+                  type="checkbox"
+                  name="agreeTerms"
+                  checked={formData.agreeTerms}
+                  onChange={handleChange}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                />
+                <span style={{ color: COLORS.textBody, fontFamily: FONTS.primary, fontSize: '14px' }}>
+                  I agree to the{' '}
+                  <span style={{ color: COLORS.text.gold, textDecoration: 'underline', cursor: 'pointer' }}>Terms of Service</span>
+                </span>
+              </div>
+              {errors.agreeTerms && (
+                <p style={{ color: '#ff4444', fontFamily: FONTS.primary, fontSize: '12px', marginTop: '-10px', marginBottom: 0 }}>
+                  {errors.agreeTerms}
+                </p>
+              )}
+
+              {formError && (
+                <div style={{
+                  padding: '12px 16px', backgroundColor: 'rgba(244,67,54,0.1)',
+                  border: '1px solid #F44336', borderRadius: '8px',
+                  color: '#F44336', fontFamily: FONTS.primary, fontSize: '14px',
+                }}>
+                  {formError}
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                onMouseEnter={() => setHoveredButton('register')}
+                onMouseLeave={() => setHoveredButton(null)}
+                style={{
+                  backgroundColor: isLoading ? COLORS.gold.muted : hoveredButton === 'register' ? COLORS.gold.light : COLORS.gold.primary,
+                  color: COLORS.maroon.dark,
+                  border: 'none',
+                  padding: '14px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  fontFamily: FONTS.primary,
+                  borderRadius: '8px',
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s ease',
+                  opacity: isLoading ? 0.7 : 1,
+                  marginTop: '8px',
+                }}
+              >
+                {isLoading ? 'Creating Account...' : 'Create Account'}
+              </button>
+            </div>
+          </form>
+
+          {/* Login Link */}
+          <div style={{ textAlign: 'center', padding: '0 32px 32px 32px' }}>
+            <p style={{ color: COLORS.textBody, fontFamily: FONTS.primary, fontSize: '14px', margin: 0 }}>
+              Already have an account?{' '}
+              <button
+                onClick={() => onNavigate('login')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: COLORS.text.gold,
+                  fontFamily: FONTS.primary,
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                }}
+              >
+                Log in here
+              </button>
+            </p>
+          </div>
+        </Card>
+      </div>
+
+      <Footer onNavigate={onNavigate} />
+    </div>
+  );
+}

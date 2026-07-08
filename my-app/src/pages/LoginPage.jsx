@@ -18,24 +18,28 @@ export default function LoginPage({ onNavigate, onLogin }) {
   return (
     <div
       style={{
-        height: "100vh",
+        minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#f5f5f5",
+        padding: "40px 24px",
+        boxSizing: "border-box",
       }}
     >
       <form
         onSubmit={handleSubmit}
         style={{
-          width: "350px",
-          padding: "30px",
+          width: "100%",
+          maxWidth: "520px",
+          padding: "32px",
           background: "#fff",
           borderRadius: "10px",
           boxShadow: "0 0 10px rgba(0,0,0,0.1)",
           display: "flex",
           flexDirection: "column",
           gap: "15px",
+          boxSizing: "border-box",
         }}
       >
         <h2 style={{ textAlign: "center", margin: 0 }}>Login</h2>
