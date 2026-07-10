@@ -41,10 +41,36 @@
 // }
 
 // export default App;
+import React, { useState } from 'react';
+import Sidebar from './components/Sidebar';
+import DashboardPage from './pages/DashboardPage';
 import WifiRegistrationPage from './pages/WifiRegistrationPage';
+import BandwidthMonitor from './pages/BandwidthMonitor';
+import MyAccountPage from './pages/MyAccountPage';
 
 function App() {
-  return <WifiRegistrationPage />;
+  const [currentPage, setCurrentPage] = useState('dashboard');
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'wifi-registration':
+        return <WifiRegistrationPage />;
+      case 'my-account':
+        return <MyAccountPage />;
+      case 'bandwidth-monitor':
+        return <BandwidthMonitor />;
+      case 'dashboard':
+      default:
+        return <DashboardPage />;
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
+      <div style={{ flex: 1 }}>{renderPage()}</div>
+    </div>
+  );
 }
 
 export default App;

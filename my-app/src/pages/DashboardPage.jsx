@@ -58,23 +58,7 @@ export default function DashboardPage() {
   });
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: COLORS.maroonDark, fontFamily: 'Arial, sans-serif' }}>
-
-      {/* ── Sidebar (placeholder, no component yet) ── */}
-      <div style={{
-        width: '220px', backgroundColor: COLORS.maroonDark,
-        borderRight: `2px solid ${COLORS.goldBorder}`, padding: '24px 16px',
-        color: COLORS.textGold,
-      }}>
-        <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '24px' }}>WayKonek</div>
-        <div style={{ marginBottom: '12px', fontWeight: 'bold' }}>📊 Dashboard</div>
-        <div style={{ marginBottom: '12px', opacity: 0.7 }}>📶 Wi-Fi Registration</div>
-        <div style={{ marginBottom: '12px', opacity: 0.7 }}>💻 My Devices</div>
-        <div style={{ marginBottom: '12px', opacity: 0.7 }}>📈 Bandwidth Monitor</div>
-        <div style={{ marginBottom: '12px', opacity: 0.7 }}>👤 My Account</div>
-      </div>
-
-      {/* ── Main ── */}
+    <div style={{ minHeight: '100vh', backgroundColor: COLORS.bgSection, fontFamily: 'Arial, sans-serif' }}>
       <div style={{ flex: 1, overflowY: 'auto', backgroundColor: COLORS.bgSection }}>
 
         <header style={{

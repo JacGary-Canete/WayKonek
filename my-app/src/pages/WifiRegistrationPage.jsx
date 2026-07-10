@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DashboardSidebar from '../components/DashboardSidebar';
 import Card from '../components/Card';
 
 const COLORS = {
@@ -120,15 +119,7 @@ export default function WifiRegistrationPage({ onNavigate, onLogout, userName, u
 
   return (
     <>
-      <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: COLORS.maroon.dark }}>
-        <DashboardSidebar
-          activeKey={activeMenu}
-          onNavigate={() => onNavigate?.('dashboard')}
-          onLogout={onLogout}
-          userName={userName}
-          userRole={userRole}
-        />
-
+      <div style={{ minHeight: '100vh', backgroundColor: COLORS.bgSection }}>
         <div style={{ flex: 1, overflowY: 'auto', backgroundColor: COLORS.bgSection }}>
           <header style={{
             backgroundColor: COLORS.maroon.dark,
