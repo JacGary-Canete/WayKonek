@@ -32,10 +32,10 @@ export default function DashboardPage() {
     goldBorder: 'rgba(212,168,67,0.3)',
     textGold: '#E8C976',
     mutedGold: 'rgba(232,201,118,0.7)',
-    bgSection: '#1A1A1A',
-    textHeading: '#FFFFFF',
-    textBody: '#EAEAEA',
-    textMuted: '#A0A0A0',
+    bgSection: '#fffdfd',
+    textHeading: '#000000',
+    textBody: '#ffffff',
+    textMuted: '#000000',
   };
 
   const statusBadge = (status) => ({
@@ -128,7 +128,7 @@ export default function DashboardPage() {
             </h2>
             <p style={{ fontSize: '14px', color: COLORS.textMuted, margin: 0 }}>
               Devices Registered:&nbsp;
-              <strong style={{ color: COLORS.textBody }}>{devices.length} / 2</strong>
+              <strong style={{ color: COLORS.textMuted }}>{devices.length} / 2</strong>
             </p>
           </div>
 
@@ -191,84 +191,103 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {/* My Devices */}
-          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: COLORS.textHeading, marginBottom: '16px' }}>
+                    {/* My Devices */}
+          <h3
+            style={{
+              fontSize: '20px',
+              fontWeight: 'bold',
+              color: COLORS.textHeading,
+              marginBottom: '16px',
+            }}
+          >
             My Devices
           </h3>
-          <div style={{
-            marginBottom: '28px', borderRadius: '12px', overflow: 'hidden',
-            border: `1px solid ${COLORS.goldBorder}`, backgroundColor: COLORS.maroonMedium,
-          }}>
+
+          <div
+            style={{
+              marginBottom: '28px',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: `1px solid ${COLORS.goldBorder}`,
+              backgroundColor: COLORS.maroonMedium,
+            }}
+          >
             {devices.map((device, idx) => (
-              <div key={device.id} style={{
-                padding: '16px 24px',
-                borderBottom: idx < devices.length - 1 ? `1px solid ${COLORS.goldBorder}` : 'none',
-                display: 'flex', alignItems: 'center', gap: '16px',
-              }}>
-                <div style={{
-                  width: '42px', height: '42px', borderRadius: '10px',
-                  backgroundColor: 'rgba(212,168,67,0.1)',
-                  border: `1px solid ${COLORS.goldBorder}`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '20px', flexShrink: 0,
-                }}>
+              <div
+                key={device.id}
+                style={{
+                  padding: '16px 24px',
+                  borderBottom:
+                    idx < devices.length - 1
+                      ? `1px solid ${COLORS.goldBorder}`
+                      : 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '10px',
+                    backgroundColor: 'rgba(212,168,67,0.1)',
+                    border: `1px solid ${COLORS.goldBorder}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '20px',
+                    flexShrink: 0,
+                  }}
+                >
                   {device.brand === 'Apple' ? '📱' : '💻'}
                 </div>
 
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '15px', fontWeight: 'bold', color: COLORS.textBody }}>
+                  <div
+                    style={{
+                      fontSize: '15px',
+                      fontWeight: 'bold',
+                      color: COLORS.textBody,
+                    }}
+                  >
                     {device.brand} {device.model}
                   </div>
-                  <div style={{ fontSize: '12px', color: COLORS.textMuted }}>
+
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: COLORS.textBody,
+                    }}
+                  >
                     MAC: {device.mac}
                   </div>
                 </div>
 
-                <span style={statusBadge(device.status)}>{device.status}</span>
+                <span style={statusBadge(device.status)}>
+                  {device.status}
+                </span>
               </div>
             ))}
 
-            <div style={{ padding: '14px 24px', textAlign: 'center', borderTop: `1px solid ${COLORS.goldBorder}` }}>
-              <span style={{ color: COLORS.textGold, fontSize: '13px', textDecoration: 'underline' }}>
+            <div
+              style={{
+                padding: '14px 24px',
+                textAlign: 'center',
+                borderTop: `1px solid ${COLORS.goldBorder}`,
+              }}
+            >
+              <span
+                style={{
+                  color: COLORS.textGold,
+                  fontSize: '13px',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                }}
+              >
                 + Add another device
               </span>
             </div>
-          </div>
-
-          {/* Recent Activity */}
-          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: COLORS.textHeading, marginBottom: '16px' }}>
-            Recent Activity
-          </h3>
-          <div style={{
-            borderRadius: '12px', overflow: 'hidden',
-            border: `1px solid ${COLORS.goldBorder}`, backgroundColor: COLORS.maroonMedium,
-          }}>
-            {recentActivity.map((item, idx) => (
-              <div key={idx} style={{
-                padding: '16px 24px',
-                borderBottom: idx < recentActivity.length - 1 ? `1px solid ${COLORS.goldBorder}` : 'none',
-                display: 'flex', alignItems: 'flex-start', gap: '14px',
-              }}>
-                <div style={{
-                  width: '8px', height: '8px', borderRadius: '50%',
-                  backgroundColor: COLORS.goldPrimary,
-                  marginTop: '6px', flexShrink: 0,
-                }} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: COLORS.textBody }}>
-                      {item.event}
-                    </span>
-                    <span style={{ fontSize: '11px', color: COLORS.textMuted }}>
-                      {item.time}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: '13px', color: COLORS.textMuted, margin: 0 }}>
-                    {item.details}
-                  </p>
-                </div>
-              </div>
-            ))}
           </div>
 
         </main>
