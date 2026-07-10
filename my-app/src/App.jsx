@@ -41,10 +41,10 @@
 // }
 
 // export default App;
-import DashboardPage from './pages/DashboardPage';
+import WifiRegistrationPage from './pages/WifiRegistrationPage';
 
 function App() {
-  return <DashboardPage />;
+  return <WifiRegistrationPage />;
 }
 
 export default App;
